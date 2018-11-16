@@ -3,12 +3,16 @@ const { VueLoaderPlugin } = require('vue-loader')
 
 module.exports = {
     mode: 'production',
-    entry: './src/index.js',
+    entry: './src/editor/index.js',
     output: {
         path: path.join(__dirname, 'lib'),
         filename: 'KeEditor.js',
         libraryTarget: 'umd',
-        library: 'KeEditor'
+        libraryExport: "default"
+        // library: 'KeEditor'
+    },
+    devtool: "source-map",
+    externals: {
     },
     module: {
         rules: [

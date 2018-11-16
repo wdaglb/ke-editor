@@ -1,9 +1,5 @@
-<style scoped lang="scss">
-
-</style>
-
 <template>
-    <script ref="text" type="text/plain"></script>
+    <textarea ref="text"></textarea>
 </template>
 
 <script>
@@ -11,32 +7,49 @@
         name: 'UEditor',
         props: {
             value: String,
-            ueditor: String
+            jquery: {
+                type: String,
+                default: 'https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js'
+            },
+            ueditor: {
+                type: String,
+                required: true
+            },
+            options: {
+                type: Object,
+                default: function () {
+                    return {}
+                }
+            },
+            toolbar: {
+                type: Array,
+                default: function () {
+                    return [
+                        ['selectall', 'fullscreen', 'source', 'drafts', '|', 'removeformat', 'formatmatch', 'blockquote', '|', 'date', 'time'],
+                        ['undo', 'redo', 'fontfamily', 'fontsize', 'bold', 'italic', 'underline', 'fontborder', 'strikethrough', '|', 'forecolor', 'backcolor', '|', 'justifyleft', 'justifycenter', 'justifyright', 'justifyjustify',
+                            '|', 'link', 'image'
+                        ],
+                        /*
+                        'fullscreen', 'source', '|', 'undo', 'redo', '|',
+                        'bold', 'italic', 'underline', 'fontborder', 'strikethrough', 'superscript', 'subscript', 'removeformat', 'formatmatch', 'autotypeset', 'blockquote', 'pasteplain', '|', 'forecolor', 'backcolor', 'insertorderedlist', 'insertunorderedlist', 'selectall', 'cleardoc', '|',
+                        'rowspacingtop', 'rowspacingbottom', 'lineheight', '|',
+                        'customstyle', 'paragraph', 'fontfamily', 'fontsize', '|',
+                        'directionalityltr', 'directionalityrtl', 'indent', '|',
+                        'justifyleft', 'justifycenter', 'justifyright', 'justifyjustify', '|', 'touppercase', 'tolowercase', '|',
+                        'link', 'unlink', 'anchor', '|', 'imagenone', 'imageleft', 'imageright', 'imagecenter', '|',
+                        'simpleupload', 'insertimage', 'emotion', 'scrawl', 'insertvideo', 'music', 'attachment', 'map', 'gmap', 'insertframe', 'insertcode', 'webapp', 'pagebreak', 'template', 'background', '|',
+                        'horizontal', 'date', 'time', 'spechars', 'snapscreen', 'wordimage', '|',
+                        'inserttable', 'deletetable', 'insertparagraphbeforetable', 'insertrow', 'deleterow', 'insertcol', 'deletecol', 'mergecells', 'mergeright', 'mergedown', 'splittocells', 'splittorows', 'splittocols', 'charts', '|',
+                        'print', 'preview', 'searchreplace', 'drafts', 'help'
+                        */
+                    ]
+                }
+            }
         },
         data () {
             return {
                 editor: null,
-                initSuccess: false,
-                // 定义工具栏图标
-                toolbar: [
-                    ['selectall', 'fullscreen', 'source', 'drafts', '|', 'removeformat', 'formatmatch', 'blockquote', '|', 'date', 'time'],
-                    ['undo', 'redo', 'fontfamily', 'fontsize', 'bold', 'italic', 'underline', 'fontborder', 'strikethrough', '|', 'forecolor', 'backcolor', '|', 'justifyleft', 'justifycenter', 'justifyright', 'justifyjustify',
-                        '|', 'link', 'image'
-                    ],
-                    /*
-                    'fullscreen', 'source', '|', 'undo', 'redo', '|',
-                    'bold', 'italic', 'underline', 'fontborder', 'strikethrough', 'superscript', 'subscript', 'removeformat', 'formatmatch', 'autotypeset', 'blockquote', 'pasteplain', '|', 'forecolor', 'backcolor', 'insertorderedlist', 'insertunorderedlist', 'selectall', 'cleardoc', '|',
-                    'rowspacingtop', 'rowspacingbottom', 'lineheight', '|',
-                    'customstyle', 'paragraph', 'fontfamily', 'fontsize', '|',
-                    'directionalityltr', 'directionalityrtl', 'indent', '|',
-                    'justifyleft', 'justifycenter', 'justifyright', 'justifyjustify', '|', 'touppercase', 'tolowercase', '|',
-                    'link', 'unlink', 'anchor', '|', 'imagenone', 'imageleft', 'imageright', 'imagecenter', '|',
-                    'simpleupload', 'insertimage', 'emotion', 'scrawl', 'insertvideo', 'music', 'attachment', 'map', 'gmap', 'insertframe', 'insertcode', 'webapp', 'pagebreak', 'template', 'background', '|',
-                    'horizontal', 'date', 'time', 'spechars', 'snapscreen', 'wordimage', '|',
-                    'inserttable', 'deletetable', 'insertparagraphbeforetable', 'insertrow', 'deleterow', 'insertcol', 'deletecol', 'mergecells', 'mergeright', 'mergedown', 'splittocells', 'splittorows', 'splittocols', 'charts', '|',
-                    'print', 'preview', 'searchreplace', 'drafts', 'help'
-                    */
-                ]
+                initSuccess: false
             }
         },
         watch: {
@@ -60,7 +73,7 @@
                     }
                     let script = document.createElement('script')
                     script.setAttribute('name', name)
-                    script.setAttribute('src', process.env.BASE_URL + src)
+                    script.setAttribute('src', src)
                     script.setAttribute('type', 'text/javascript')
                     // console.log(process.env.BASE_URL + src)
                     script.onload = script.onreadystatechange = function() {
@@ -127,8 +140,8 @@
 
         async created () {
             this.initSuccess = false
-            await this.loadjs('https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js', 'jquery')
-            window.UEDITOR_CONFIG = {
+            await this.loadjs(this.jquery, 'jquery')
+            let config = {
 
                 //为编辑器实例添加一个路径，这个不能被注释
                 UEDITOR_HOME_URL: this.ueditor
@@ -518,13 +531,16 @@
                     video:  ['autoplay', 'controls', 'loop', 'preload', 'src', 'height', 'width', 'class', 'style']
                 }
             }
+            if (this.options) {
+                config = { ...config, ...this.options }
+            }
 
             await this.loadjs(`${this.ueditor}ueditor.all.min.js`, 'ueditor')
 
             this.register()
             let handle = this.$refs['text']
 
-            this.editor = new UE.ui.Editor(window.UEDITOR_CONFIG)
+            this.editor = new UE.ui.Editor(config)
             this.editor.render(handle)
             // this.editor = UE.getEditor(handle)
 
@@ -533,6 +549,7 @@
                     this.editor.setContent(this.value)
                 }
                 this.initSuccess = true
+                this.$emit('ready', this.editor)
             })
 
             this.editor.addListener('contentChange', () => {
