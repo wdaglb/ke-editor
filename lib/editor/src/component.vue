@@ -7,12 +7,11 @@
 </template>
 
 <script>
-    import '../../../static/jquery-3.3.1.min'
-    import '../../../static/ueditor/ueditor.all'
     export default {
         name: 'UEditor',
         props: {
-            value: String
+            value: String,
+            ueditor: String
         },
         data () {
             return {
@@ -128,11 +127,11 @@
 
         async created () {
             this.initSuccess = false
-            // await this.loadjs('static/js/jquery-3.3.1.min.js', 'jquery')
-            const config = {
+            await this.loadjs('https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js', 'jquery')
+            window.UEDITOR_CONFIG = {
 
                 //为编辑器实例添加一个路径，这个不能被注释
-                UEDITOR_HOME_URL: `${process.env.BASE_URL}static/js/ueditor/`
+                UEDITOR_HOME_URL: this.ueditor
 
 
                 //工具栏上的所有的功能按钮和下拉框，可以在new编辑器的实例时选择自己需要的重新定义
@@ -520,12 +519,12 @@
                 }
             }
 
-            // await this.loadjs('static/js/ueditor/ueditor.all.min.js', 'ueditor')
+            await this.loadjs(`${this.ueditor}ueditor.all.min.js`, 'ueditor')
 
             this.register()
             let handle = this.$refs['text']
 
-            this.editor = new UE.ui.Editor(config)
+            this.editor = new UE.ui.Editor(window.UEDITOR_CONFIG)
             this.editor.render(handle)
             // this.editor = UE.getEditor(handle)
 
