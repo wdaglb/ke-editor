@@ -1,6 +1,6 @@
 {
   "name": "ke-ueditor",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "main": "lib/KeEditor.js",
   "license": "MIT",
   "repository": {
